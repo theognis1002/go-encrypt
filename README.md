@@ -61,16 +61,16 @@ The Makefile includes commands to build, encrypt, and decrypt files, as well as 
 
 ### Encrypting a file
 
-To encrypt `example.csv` into `encrypted.csv`, run:
+1. To encrypt `example.csv` into `encrypted.csv`, run:
 
-    ```sh
-    make encrypt
-    ```
+   ```sh
+   make encrypt
+   ```
 
 ### Decrypting a file
 
-To decrypt `encrypted.csv` into `decrypted.csv`, run:
+2. To decrypt `encrypted.csv` into `decrypted.csv`, run:
 
-    ```sh
-    make decrypt
-    ```
+   ```sh
+   make decrypt
+   ```
