@@ -13,13 +13,13 @@ This project provides a simple implementation of file encryption and decryption 
 1. **Clone the repository:**
 
    ```sh
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/theognis1002/go-encrypt
+   cd go-encrypt/
    ```
 
 2. **Set the secret key:**
 
-   Update the key variable in the main.go file with your 16, 24, or 32 bytes key for AES-128, AES-192, or AES-256 respectively.
+   Update the key variables in the `.env` file (using `.env.sample` as a reference) with your 16, 24, or 32 bytes key for AES-128, AES-192, or AES-256 respectively.
 
 ## Makefile Commands
 

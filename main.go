@@ -6,17 +6,36 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	key := []byte("example key 1234") // 16 bytes key for AES-128
-	inputFile := "example.csv"
-	encryptedFile := "encrypted.csv"
-	decryptedFile := "decrypted.csv"
+	// Load the environment variables from the .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
+	key := []byte(os.Getenv("KEY"))
+	inputFile := os.Getenv("INPUT_FILE")
+	encryptedFile := os.Getenv("ENCRYPTED_FILE")
+	decryptedFile := os.Getenv("DECRYPTED_FILE")
+
+	// Check if the key length is correct
+	if len(key) != 16 {
+		log.Fatalf("Key length must be 16 bytes")
+	}
+
+	fmt.Println("Key:", string(key))
+	fmt.Println("Input File:", inputFile)
+	fmt.Println("Encrypted File:", encryptedFile)
+	fmt.Println("Decrypted File:", decryptedFile)
 
 	// Encrypt the file
-	err := encryptFile(inputFile, encryptedFile, key)
+	err = encryptFile(inputFile, encryptedFile, key)
 	if err != nil {
 		fmt.Println("Error encrypting file:", err)
 		return
