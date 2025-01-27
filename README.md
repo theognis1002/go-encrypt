@@ -136,6 +136,40 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
    This will generate a coverage report in HTML format (coverage.html)
 
+3. **Run specific tests:**
+
+   ```sh
+   go test -v ./... -run TestName
+   ```
+
+4. **Run tests for a specific package:**
+
+   ```sh
+   go test ./pkg/encryption -v
+   ```
+
+5. **Run tests with race detection:**
+
+   ```sh
+   go test -race ./...
+   ```
+
+### Test Organization
+
+Tests are organized in the following structure:
+
+```
+├── pkg/
+│   ├── encryption/
+│   │   ├── aes_test.go
+│   │   ├── des_test.go
+│   │   └── rc4_test.go
+│   └── utils/
+│       └── utils_test.go
+```
+
+Each test file corresponds to its implementation file and follows Go's standard testing conventions.
+
 ### Test Coverage
 
 The test suite includes:
