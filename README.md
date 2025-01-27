@@ -117,3 +117,39 @@ This project provides a robust implementation of file encryption and decryption 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Testing
+
+### Running Tests
+
+1. **Run all tests:**
+
+   ```sh
+   make test
+   ```
+
+2. **Run tests with coverage:**
+
+   ```sh
+   make test-coverage
+   ```
+
+   This will generate a coverage report in HTML format (coverage.html)
+
+### Test Coverage
+
+The test suite includes:
+
+- Unit tests for each encryption algorithm (AES, DES, RC4)
+- Key size validation tests
+- Encryption/decryption round-trip tests
+- Error handling tests
+
+### Writing Tests
+
+When contributing new features, please ensure:
+
+- All new code is thoroughly tested
+- Tests are placed in the appropriate `_test.go` file
+- Test coverage is maintained or improved
+- Tests are clear and well-documented
