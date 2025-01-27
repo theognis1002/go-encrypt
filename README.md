@@ -14,7 +14,7 @@ This project provides a robust implementation of file encryption and decryption 
 
 ## Requirements
 
-- Go 1.16 or later
+- Go 1.21 or later
 - Environment variables configuration
 
 ## Supported Algorithms
