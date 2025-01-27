@@ -1,10 +1,44 @@
-# File Encryption & Decryption in Go
+# Multi-Algorithm File Encryption & Decryption in Go
 
-This project provides a simple implementation of file encryption and decryption using the AES-GCM (Galois/Counter Mode) in Go. It demonstrates how to securely encrypt and decrypt files using a secret key.
+This project provides a robust implementation of file encryption and decryption using multiple encryption algorithms in Go. It supports AES-GCM, DES-CBC, and RC4 encryption methods.
+
+## Features
+
+- Multiple encryption algorithms:
+  - AES (Advanced Encryption Standard) with GCM mode
+  - DES (Data Encryption Standard) with CBC mode
+  - RC4 (Rivest Cipher 4) stream cipher
+- Secure key handling
+- File-based encryption/decryption
+- Environment variable configuration
 
 ## Requirements
 
 - Go 1.16 or later
+- Environment variables configuration
+
+## Supported Algorithms
+
+### AES (Advanced Encryption Standard)
+
+- Key size: 16 bytes (AES-128)
+- Modern, secure block cipher
+- Recommended for most use cases
+- Uses GCM mode for authenticated encryption
+
+### DES (Data Encryption Standard)
+
+- Key size: 8 bytes
+- Legacy block cipher
+- Not recommended for new applications
+- Uses CBC mode with PKCS7 padding
+
+### RC4 (Rivest Cipher 4)
+
+- Variable key size (using 16 bytes in this implementation)
+- Stream cipher
+- Fast but not cryptographically secure
+- Not recommended for sensitive data
 
 ## Usage
 
@@ -13,25 +47,34 @@ This project provides a simple implementation of file encryption and decryption 
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/theognis1002/go-encrypt
+   git clone https://github.com/yourusername/go-encrypt
    cd go-encrypt/
    ```
 
-2. **Set the secret key:**
+2. **Configure the environment:**
+   Create a `.env` file with the following variables:
 
-   Update the key variables in the `.env` file (using `.env.sample` as a reference) with your 16, 24, or 32 bytes key for AES-128, AES-192, or AES-256 respectively.
+   ```
+   ALGORITHM=AES  # Can be AES, DES, or RC4
+   KEY=your16bytesecret  # Key size depends on algorithm
+   INPUT_FILE=example.txt
+   ENCRYPTED_FILE=encrypted.bin
+   DECRYPTED_FILE=decrypted.txt
+   ```
 
-## Makefile Commands
+   Key size requirements:
 
-The Makefile includes commands to build, encrypt, and decrypt files, as well as to clean up the build files.
+   - AES: 16 bytes
+   - DES: 8 bytes
+   - RC4: 16 bytes
 
-1. **Build the project:**
+### Running the Program
+
+1. **Build the program:**
 
    ```sh
    make build
    ```
-
-   This command compiles the Go program into a binary named file-crypto.
 
 2. **Encrypt a file:**
 
@@ -39,38 +82,38 @@ The Makefile includes commands to build, encrypt, and decrypt files, as well as 
    make encrypt
    ```
 
-   This command encrypts the file example.csv into `encrypted.csv`. You can change the input and output filenames by editing the Makefile or running the binary directly with the desired arguments.
-
 3. **Decrypt a file:**
-
    ```sh
    make decrypt
    ```
 
-   This command decrypts the file `encrypted.csv` into decrypted.csv.
+### Example Usage
 
-4. **Clean up build files:**
-
-   ```sh
-   make clean
-   ```
-
-   This command removes the binary and any other build-related files.
-
-## Example Usage
-
-### Encrypting a file
-
-1. To encrypt `example.csv` into `encrypted.csv`, run:
+1. **Using AES encryption:**
 
    ```sh
-   make encrypt
+   ALGORITHM=AES KEY=1234567890123456 make encrypt
    ```
 
-### Decrypting a file
-
-2. To decrypt `encrypted.csv` into `decrypted.csv`, run:
+2. **Using DES encryption:**
 
    ```sh
-   make decrypt
+   ALGORITHM=DES KEY=12345678 make encrypt
    ```
+
+3. **Using RC4 encryption:**
+   ```sh
+   ALGORITHM=RC4 KEY=1234567890123456 make encrypt
+   ```
+
+## Security Considerations
+
+- AES is the recommended algorithm for new applications
+- DES is included for legacy compatibility but should not be used for new applications
+- RC4 is included for educational purposes but should not be used for sensitive data
+- Always use strong, random keys
+- Keep your keys secure and never commit them to version control
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
