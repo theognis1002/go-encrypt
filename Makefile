@@ -1,41 +1,31 @@
-### Makefile
+.PHONY: encrypt decrypt clean test all
 
-```Makefile
-# Makefile for the Go File Encryption and Decryption project
+KEY = 1234567890123456
+INPUT_FILE = example.csv
+OUTPUT_DIR = output
 
-# The binary name
-BINARY_NAME = file-crypto
-
-# Build the Go binary
-build:
-	@echo "Building the Go binary..."
-	go build -o $(BINARY_NAME) main.go
-
-# Run the Go application with encryption
 encrypt:
 	@echo "Encrypting the file..."
-	./$(BINARY_NAME) encrypt example.csv encrypted.csv
+	@mkdir -p $(OUTPUT_DIR)
+	go run main.go -key "$(KEY)" -input "$(INPUT_FILE)" -encrypt "encrypted.csv"
 
-# Run the Go application with decryption
 decrypt:
 	@echo "Decrypting the file..."
-	./$(BINARY_NAME) decrypt encrypted.csv decrypted.csv
+	@mkdir -p $(OUTPUT_DIR)
+	go run main.go -key "$(KEY)" -input "$(OUTPUT_DIR)/encrypted.csv" -decrypt "decrypted.csv"
 
-# Clean up build files
 clean:
-	@echo "Cleaning up..."
-	rm -f $(BINARY_NAME)
+	@find $(OUTPUT_DIR)/ -type f ! -name '.gitkeep' -delete
+	@echo "Squeaky clean!"
 
-# Run all tests
 test:
 	@echo "Running tests..."
 	go test -v ./...
 
-# Run tests with coverage
 test-coverage:
 	@echo "Running tests with coverage..."
-	go test -v -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out -o coverage.html
+	@mkdir -p $(OUTPUT_DIR)
+	go test -v -coverprofile=$(OUTPUT_DIR)/coverage.out ./...
+	go tool cover -html=$(OUTPUT_DIR)/coverage.out -o $(OUTPUT_DIR)/coverage.html
 
-# Default target: build the binary and run tests
-all: build test
+all: test

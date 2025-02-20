@@ -4,51 +4,66 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
+	"path/filepath"
 )
 
 func main() {
-	// Load the environment variables from the .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
+	keyPtr := flag.String("key", "", "16-byte encryption/decryption key")
+	inputPtr := flag.String("input", "", "input file path")
+	encryptPtr := flag.String("encrypt", "", "output path for encrypted file")
+	decryptPtr := flag.String("decrypt", "", "output path for decrypted file")
+
+	flag.Parse()
+
+	// Validate required flags
+	if *keyPtr == "" || *inputPtr == "" || (*encryptPtr == "" && *decryptPtr == "") {
+		flag.Usage()
+		log.Fatalf("Missing required flags")
 	}
 
-	key := []byte(os.Getenv("KEY"))
-	inputFile := os.Getenv("INPUT_FILE")
-	encryptedFile := os.Getenv("ENCRYPTED_FILE")
-	decryptedFile := os.Getenv("DECRYPTED_FILE")
+	key := []byte(*keyPtr)
+	inputFile := *inputPtr
 
-	// Check if the key length is correct
 	if len(key) != 16 {
 		log.Fatalf("Key length must be 16 bytes")
 	}
 
+	err := os.MkdirAll("output", 0755)
+	if err != nil {
+		log.Fatalf("Error creating output directory: %v", err)
+	}
+
 	fmt.Println("Key:", string(key))
 	fmt.Println("Input File:", inputFile)
-	fmt.Println("Encrypted File:", encryptedFile)
-	fmt.Println("Decrypted File:", decryptedFile)
 
-	// Encrypt the file
-	err = encryptFile(inputFile, encryptedFile, key)
-	if err != nil {
-		fmt.Println("Error encrypting file:", err)
-		return
+	if *encryptPtr != "" {
+		outputPath := filepath.Join("output", *encryptPtr)
+		err = encryptFile(inputFile, outputPath, key)
+		if err != nil {
+			fmt.Println("Error encrypting file:", err)
+			return
+		}
+		fmt.Println("File encrypted successfully to:", outputPath)
 	}
-	fmt.Println("File encrypted successfully.")
 
-	// Decrypt the file
-	err = decryptFile(encryptedFile, decryptedFile, key)
-	if err != nil {
-		fmt.Println("Error decrypting file:", err)
-		return
+	if *decryptPtr != "" {
+		inputForDecrypt := inputFile
+		if *encryptPtr != "" {
+			inputForDecrypt = filepath.Join("output", *encryptPtr)
+		}
+		outputPath := filepath.Join("output", *decryptPtr)
+		err = decryptFile(inputForDecrypt, outputPath, key)
+		if err != nil {
+			fmt.Println("Error decrypting file:", err)
+			return
+		}
+		fmt.Println("File decrypted successfully to:", outputPath)
 	}
-	fmt.Println("File decrypted successfully.")
 }
 
 // encryptFile encrypts the file at inputPath and writes the encrypted data to outputPath
@@ -58,7 +73,6 @@ func encryptFile(inputPath, outputPath string, key []byte) error {
 		return err
 	}
 
-	// Generate a new AES cipher using our 16, 24 or 32 bytes long key
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err
@@ -74,8 +88,12 @@ func encryptFile(inputPath, outputPath string, key []byte) error {
 		return err
 	}
 
-	// Encrypt the data using Seal (which also appends the nonce and the encrypted data together)
 	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+
+	// Create output directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
+		return err
+	}
 
 	return os.WriteFile(outputPath, ciphertext, 0644)
 }
@@ -100,9 +118,13 @@ func decryptFile(inputPath, outputPath string, key []byte) error {
 	nonceSize := gcm.NonceSize()
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
 
-	// Decrypt the data
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
+		return err
+	}
+
+	// Create output directory if it doesn't exist
+	if err := os.MkdirAll(filepath.Dir(outputPath), 0755); err != nil {
 		return err
 	}
 
